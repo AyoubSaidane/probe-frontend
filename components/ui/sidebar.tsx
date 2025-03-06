@@ -86,7 +86,7 @@ export function SessionNavBar() {
   return (
     <motion.div
       className={cn(
-        "sidebar fixed left-0 z-40 h-full shrink-0 border-r fixed",
+        "sidebar fixed left-0 z-40 h-full shrink-0 fixed",
       )}
       initial={isCollapsed ? "closed" : "open"}
       animate={isCollapsed ? "closed" : "open"}
@@ -174,7 +174,9 @@ export function SessionNavBar() {
                       <motion.li variants={variants}>
                         {!isCollapsed && (
                           <div className="ml-2 flex items-center  gap-2">
-                            <p className="text-sm font-medium text-[var(--main-text-bg)]">Start New Chat</p>
+                            <p className="text-sm font-medium text-[var(--main-text-bg)]">
+                              Start New Chat
+                              </p>
                             <Badge
                               className={cn(
                                 "flex h-fit w-fit items-center gap-1.5 rounded border-none bg-blue-50 px-1.5 text-blue-600 dark:bg-blue-700 dark:text-blue-300",
