@@ -1,9 +1,8 @@
 "use client";
 
-import { notFound } from "next/navigation";
-import { SimplifiedChat } from "@/components/ui/simplified-chat";
-import { useState, useEffect, useRef } from "react";
-import { Separator } from "@/components/ui/separator";
+import { useState, useEffect } from "react";
+import { ChatArea } from "@/components/chat/chat-area";
+import { ContentArea } from "@/components/chat/content-area";
 
 interface Message {
   id: string;
@@ -18,7 +17,6 @@ interface ChatPageProps {
 export default function ChatPage({ params }: ChatPageProps) {
   const { chatId } = params;
   const [messages, setMessages] = useState<Message[]>([]);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
   
   // Fetch messages when component mounts
   useEffect(() => {
@@ -42,11 +40,6 @@ export default function ChatPage({ params }: ChatPageProps) {
     
     setMessages(initialMessages);
   }, [chatId]);
-  
-  // Scroll to bottom when messages change
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
   
   // Handle sending a new message
   const handleSendMessage = (content: string) => {
@@ -73,76 +66,11 @@ export default function ChatPage({ params }: ChatPageProps) {
 
   return (
     <div className="h-screen w-screen bg-[var(--secondary-500)] fixed inset-0 overflow-hidden">
-      {/* Left div - 65% width, starting at 3.05rem from left */}
-      <div 
-        className="absolute left-[3.05rem] top-4 bottom-4 bg-[var(--main-white)] flex flex-col rounded-bl-xl rounded-tl-xl ml-4" 
-        style={{ width: "calc(65% - 3.05rem)" }}
-      >
-        {/* Chat messages area - only this should be scrollable */}
-        <div className="flex-1 overflow-y-auto px-4 scrollbarWidth-none msOverflowStyle-none pb-24">
-          <style>
-          {`
-            /* Hide scrollbar for Chrome, Safari, and Edge */
-            div::-webkit-scrollbar {
-              display: none;
-            }
-          `}
-          </style>
-          <div className="flex flex-col space-y-4 w-[77%] mx-auto pt-6">
-            {messages.map((message, index) => (
-              <div key={message.id}>
-                <div className="text-left">
-                  {message.role === "assistant" && (
-                    <div className="text-xl font-bold mb-2">
-                      Here's what probe found for you
-                    </div>
-                  )}
-                  <div className="text-sm">
-                    {message.content}
-                  </div>
-                </div>
-                {message.role === "assistant" && index < messages.length - 1 && (
-                  <div className="py-4 flex justify-center">
-                    <Separator className="w-full bg-[var(--primary-500)]" />
-                  </div>
-                )}
-              </div>
-            ))}
-            <div ref={messagesEndRef} />
-          </div>
-        </div>
-        
-        {/* Floating chat input at the bottom */}
-        <div className="absolute bottom-6 left-0 right-0 px-4 flex justify-center z-10">
-          <SimplifiedChat 
-            onSendMessage={handleSendMessage}
-          />
-        </div>
-      </div>
-      
-      {/* Right div - 35% width */}
-      <div 
-        className="absolute right-0 top-4 bottom-4 bg-[var(--main-white)] px-4 pr-8 mr-4 flex flex-col rounded-tr-xl rounded-br-xl"
-        style={{ width: "35%" }}
-      >
-        {/* Navigation buttons */}
-        <div className="flex space-x-4 mt-6 mb-6">
-          <button className="flex-1 py-2 px-4 bg-[var(--primary-500)] text-white rounded-md hover:bg-[var(--primary-600)] transition-colors">
-            Slides
-          </button>
-          <button className="flex-1 py-2 px-4 bg-[var(--primary-500)] text-white rounded-md hover:bg-[var(--primary-600)] transition-colors">
-            Experts
-          </button>
-          <button className="flex-1 py-2 px-4 bg-[var(--primary-500)] text-white rounded-md hover:bg-[var(--primary-600)] transition-colors">
-            Documents
-          </button>
-        </div>
-        
-        {/* Content area */}
-        <div className="flex-1 overflow-y-auto">
-          {/* Content will go here */}
-        </div>
-      </div>
+      <ChatArea 
+        messages={messages}
+        onSendMessage={handleSendMessage}
+      />
+      <ContentArea />
     </div>
   );
 }

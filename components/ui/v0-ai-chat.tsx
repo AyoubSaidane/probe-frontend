@@ -100,7 +100,7 @@ export function VercelV0Chat() {
                 What are you searching for today ?
             </h1>
 
-            <div className="w-full min-w-0">
+            <div className="w-full min-w-0 relative">
                 <div className="relative bg-[var(--main-white)] rounded-xl border border-neutral-200">
                     <div className="overflow-y-auto">
                         <Textarea
@@ -111,16 +111,16 @@ export function VercelV0Chat() {
                                 adjustHeight();
                             }}
                             onKeyDown={handleKeyDown}
-                            placeholder="Ask v0 a question..."
+                            placeholder="Ask me for anything, I’ll probe your knowledge base for you"
                             className={cn(
                                 "w-full px-4 py-3",
                                 "resize-none",
                                 "bg-transparent",
                                 "border-none",
-                                "text-[var(--neutral-500)] text-sm",
+                                "text-[var(--main-bg-text)] text-sm",
                                 "focus:outline-none",
                                 "focus-visible:ring-0 focus-visible:ring-offset-0",
-                                "placeholder:text-neutral-400 placeholder:text-sm",
+                                "placeholder:text-[var(--neutral-500)] placeholder:text-sm",
                                 "min-h-[60px]"
                             )}
                             style={{
@@ -207,7 +207,7 @@ export function VercelV0Chat() {
                 </div>
 
                 {showFilters && (
-                    <div className="flex flex-wrap items-center justify-center gap-4 mt-4 animate-in fade-in slide-in-from-top-5 duration-300">
+                    <div className="absolute left-0 right-0 top-full mt-4 flex flex-wrap items-center justify-center gap-4 animate-in fade-in slide-in-from-top-5 duration-300">
                         <ActionButton
                             icon={<Calendar className="w-4 h-4" />}
                             label="File Date"
