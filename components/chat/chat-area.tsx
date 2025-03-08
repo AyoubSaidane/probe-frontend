@@ -26,7 +26,7 @@ export function ChatArea({ messages, onSendMessage }: ChatAreaProps) {
   return (
     <div 
       className="absolute left-[3.05rem] top-4 bottom-4 bg-[var(--main-white)] flex flex-col rounded-bl-xl rounded-tl-xl ml-4" 
-      style={{ width: "calc(65% - 3.05rem)" }}
+      style={{ width: "calc(55% - 3.05rem)" }}
     >
       {/* Chat messages area - only this should be scrollable */}
       <div className="flex-1 overflow-y-auto px-4 scrollbarWidth-none msOverflowStyle-none pb-24">
@@ -38,7 +38,7 @@ export function ChatArea({ messages, onSendMessage }: ChatAreaProps) {
           }
         `}
         </style>
-        <div className="flex flex-col space-y-4 w-[77%] mx-auto pt-6">
+        <div className="flex flex-col space-y-4 w-[70%] mx-auto pt-6">
           {messages.map((message, index) => (
             <div key={message.id}>
               <div className="text-left">

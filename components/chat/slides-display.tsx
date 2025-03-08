@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 
 // Define our slide interface
@@ -17,15 +17,68 @@ interface SlidesDisplayProps {
 export function SlidesDisplay({ slides = [] }: SlidesDisplayProps) {
   // Track which slide is currently selected for the main preview
   const [selectedSlide, setSelectedSlide] = useState<string>(slides[0]?.id || "");
+  // Track visible slides count
+  const [visibleSlidesCount, setVisibleSlidesCount] = useState(slides.length);
+  // Reference to the grid container
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  // Function to check visibility of thumbnails
+  const checkVisibility = () => {
+    if (!gridRef.current) return;
+    
+    // Get all thumbnails
+    const thumbnails = gridRef.current.querySelectorAll('.slide-thumbnail');
+    let visibleCount = 0;
+    
+    // Use getBoundingClientRect to check if thumbnails are within the container's viewport
+    const containerRect = gridRef.current.getBoundingClientRect();
+    
+    thumbnails.forEach((thumbnail) => {
+      const thumbRect = thumbnail.getBoundingClientRect();
+      // Check if the thumbnail is visible within the container
+      if (
+        thumbRect.top >= containerRect.top - thumbRect.height/2 && 
+        thumbRect.bottom <= containerRect.bottom + thumbRect.height/2
+      ) {
+        visibleCount++;
+      }
+    });
+    
+    setVisibleSlidesCount(visibleCount);
+  };
+
+  // Set up visibility check
+  useEffect(() => {
+    if (!gridRef.current) return;
+    
+    // Initial check
+    setTimeout(checkVisibility, 100); // Slight delay to ensure rendering is complete
+    
+    // Set up scroll event listener
+    const container = gridRef.current;
+    container.addEventListener('scroll', checkVisibility);
+    
+    // Set up resize observer
+    const resizeObserver = new ResizeObserver(() => {
+      setTimeout(checkVisibility, 100);
+    });
+    
+    resizeObserver.observe(container);
+    
+    return () => {
+      container.removeEventListener('scroll', checkVisibility);
+      resizeObserver.disconnect();
+    };
+  }, [slides.length]);
 
   // If no slides are provided, show a placeholder
   if (slides.length === 0) {
     return (
       <div className="h-full flex flex-col p-2">
-        <div className="bg-gray-100 rounded-lg h-2/3 mb-4 flex items-center justify-center">
+        <div className="bg-gray-100 rounded-lg h-1/4 mb-4 flex items-center justify-center">
           <p className="text-gray-500">No slides available</p>
         </div>
-        <div className="grid grid-cols-2 gap-2 h-1/3">
+        <div className="grid grid-cols-2 gap-2 h-3/5">
           {[1, 2, 3, 4].map((placeholder) => (
             <div 
               key={placeholder} 
@@ -40,17 +93,20 @@ export function SlidesDisplay({ slides = [] }: SlidesDisplayProps) {
   }
 
   const currentSlide = slides.find(slide => slide.id === selectedSlide) || slides[0];
+  const hiddenSlidesCount = Math.max(0, slides.length - visibleSlidesCount);
   
   return (
-    <div className="h-full flex flex-col p-2">
-      {/* Main preview area - adjusted for landscape format */}
-      <div className="bg-white shadow-sm rounded-lg h-3/5 mb-4 overflow-hidden">
-        <div className="relative w-full h-full">
+    <div className="h-full flex flex-col">
+      {/* Main preview area - with adaptive height */}
+      <div className="bg-white shadow-sm rounded-lg mb-4 overflow-hidden">
+        <div className="relative w-full" style={{ minHeight: "100px" }}>
           <Image
             src={currentSlide.imageUrl}
             alt={currentSlide.title || "Slide preview"}
-            fill
-            style={{ objectFit: "contain" }}
+            width={0}
+            height={0}
+            sizes="100vw"
+            className="w-full h-auto"
             priority
           />
           {currentSlide.title && (
@@ -61,14 +117,22 @@ export function SlidesDisplay({ slides = [] }: SlidesDisplayProps) {
         </div>
       </div>
 
-      {/* Thumbnail grid - adjusted to take remaining space */}
-      <div className="grid grid-cols-3 gap-2 flex-1 overflow-y-auto">
+      {/* Adaptive thumbnail grid - takes remaining space */}
+      <div 
+        ref={gridRef}
+        className="flex-1 overflow-y-auto relative"
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))",
+          gap: "0.5rem",
+        }}
+      >
         {slides.map((slide) => (
           <div 
             key={slide.id}
             onClick={() => setSelectedSlide(slide.id)}
             className={`
-              relative rounded-md overflow-hidden cursor-pointer aspect-video
+              slide-thumbnail relative rounded-md overflow-hidden cursor-pointer aspect-video
               ${selectedSlide === slide.id ? 'ring-2 ring-blue-500' : ''}
             `}
           >
@@ -80,6 +144,13 @@ export function SlidesDisplay({ slides = [] }: SlidesDisplayProps) {
             />
           </div>
         ))}
+        
+        {/* More slides indicator */}
+        {hiddenSlidesCount > 0 && (
+          <div className="sticky bottom-0 left-0 right-0 bg-[var(--secondary-500)] text-[var(--main-text-bg)] p-2 text-center rounded-md mt-1 shadow-md">
+            +{hiddenSlidesCount} more relevant slides
+          </div>
+        )}
       </div>
     </div>
   );

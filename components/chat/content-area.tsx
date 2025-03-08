@@ -63,7 +63,7 @@ export function ContentArea({}: ContentAreaProps) {
   return (
     <div 
       className="absolute right-0 top-4 bottom-4 bg-[var(--main-white)] px-4 pr-8 mr-4 flex flex-col rounded-tr-xl rounded-br-xl"
-      style={{ width: "35%" }}
+      style={{ width: "45%" }}
     >
       {/* Navigation buttons */}
       <ContentButtons 
