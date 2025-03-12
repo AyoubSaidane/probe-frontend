@@ -44,7 +44,7 @@ export function SlidePreviewModal({
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
       onClick={onClose}
     >
-      <div className="max-w-[90vw] max-h-[90vh] bg-white rounded-lg overflow-hidden shadow-xl">
+      <div className="max-w-[90vw] max-h-[90vh] bg-transparent rounded-lg overflow-hidden shadow-xl">
         <div className="relative w-full" style={{ maxHeight: "85vh" }}>
           <Image
             src={imageUrl}

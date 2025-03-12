@@ -26,8 +26,8 @@ export function SlidesDisplay({ slides = [] }: SlidesDisplayProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [previewSlide, setPreviewSlide] = useState<Slide | null>(null);
 
-  // Function to handle double click on slides
-  const handleDoubleClick = (slide: Slide) => {
+  // Function to handle click on main preview
+  const handleMainPreviewClick = (slide: Slide) => {
     setPreviewSlide(slide);
     setModalOpen(true);
   };
@@ -112,7 +112,7 @@ export function SlidesDisplay({ slides = [] }: SlidesDisplayProps) {
         <div 
           className="relative w-full" 
           style={{ minHeight: "100px" }}
-          onDoubleClick={() => handleDoubleClick(currentSlide)}
+          onClick={() => handleMainPreviewClick(currentSlide)}
         >
           <Image
             src={currentSlide.imageUrl}
@@ -147,7 +147,6 @@ export function SlidesDisplay({ slides = [] }: SlidesDisplayProps) {
           <div 
             key={slide.id}
             onClick={() => setSelectedSlide(slide.id)}
-            onDoubleClick={() => handleDoubleClick(slide)}
             className={`
               slide-thumbnail relative rounded-md overflow-hidden cursor-pointer aspect-video
               ${selectedSlide === slide.id ? 'ring-2 ring-blue-500' : ''}

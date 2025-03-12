@@ -101,6 +101,21 @@ export function SessionNavBar() {
       >
         <motion.ul variants={staggerVariants} className="flex h-full flex-col">
           <div className="flex grow flex-col items-center">
+            {/* Logo added at the top */}
+            <Link href="/" className="w-full py-2 flex justify-center items-center">
+              <div className="relative h-full w-full px-2 flex justify-center items-center">
+                <Image 
+                  src={isCollapsed ? "/probe/logo_pb_sonar.svg"  : "/probe/logo_name.svg" } 
+                  alt="Logo" 
+                  width={isCollapsed ? 33 : 80} 
+                  height={isCollapsed ? 33 : 30} 
+                  className="object-contain transition-all"
+                  priority
+                />
+              </div>
+            </Link>
+            <Separator className="w-full" />
+
             <div className="flex h-[54px] w-full shrink-0  border-b p-2">
               <div className=" mt-[1.5px] flex w-full">
                 <DropdownMenu modal={false}>
