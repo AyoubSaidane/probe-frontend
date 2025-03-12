@@ -6,7 +6,7 @@ import { SessionNavBar } from "@/components/ui/sidebar"
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Probe App',
+  title: 'Probe',
   description: 'A simple application built with Next.js and shadcn/ui',
 }
 

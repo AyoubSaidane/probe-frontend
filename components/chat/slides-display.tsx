@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import { SlidePreviewModal } from "./slide-preview-modal";
 
 // Define our slide interface
 interface Slide {
@@ -21,6 +22,15 @@ export function SlidesDisplay({ slides = [] }: SlidesDisplayProps) {
   const [visibleSlidesCount, setVisibleSlidesCount] = useState(slides.length);
   // Reference to the grid container
   const gridRef = useRef<HTMLDivElement>(null);
+  // Modal state
+  const [modalOpen, setModalOpen] = useState(false);
+  const [previewSlide, setPreviewSlide] = useState<Slide | null>(null);
+
+  // Function to handle double click on slides
+  const handleDoubleClick = (slide: Slide) => {
+    setPreviewSlide(slide);
+    setModalOpen(true);
+  };
 
   // Function to check visibility of thumbnails
   const checkVisibility = () => {
@@ -99,38 +109,45 @@ export function SlidesDisplay({ slides = [] }: SlidesDisplayProps) {
     <div className="h-full flex flex-col">
       {/* Main preview area - with adaptive height */}
       <div className="bg-white shadow-sm rounded-lg mb-4 overflow-hidden">
-        <div className="relative w-full" style={{ minHeight: "100px" }}>
+        <div 
+          className="relative w-full" 
+          style={{ minHeight: "100px" }}
+          onDoubleClick={() => handleDoubleClick(currentSlide)}
+        >
           <Image
             src={currentSlide.imageUrl}
             alt={currentSlide.title || "Slide preview"}
             width={0}
             height={0}
             sizes="100vw"
-            className="w-full h-auto"
+            className="w-full h-auto cursor-pointer"
             priority
           />
-          {currentSlide.title && (
-            <div className="absolute bottom-0 left-0 right-0 bg-black/50 p-2">
-              <p className="text-white text-sm">{currentSlide.title}</p>
-            </div>
-          )}
         </div>
+        {currentSlide.title && (
+          <div className="p-2 border-t border-gray-100">
+            <p className="text-sm font-medium">{currentSlide.title}</p>
+          </div>
+        )}
       </div>
 
       {/* Adaptive thumbnail grid - takes remaining space */}
       <div 
         ref={gridRef}
-        className="flex-1 overflow-y-auto relative"
+        className="flex-1 overflow-y-auto relative grid-container"
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))",
           gap: "0.5rem",
+          alignItems: "start", // Align items to start (top)
+          gridAutoRows: "min-content", // Ensure rows only take the needed height
         }}
       >
         {slides.map((slide) => (
           <div 
             key={slide.id}
             onClick={() => setSelectedSlide(slide.id)}
+            onDoubleClick={() => handleDoubleClick(slide)}
             className={`
               slide-thumbnail relative rounded-md overflow-hidden cursor-pointer aspect-video
               ${selectedSlide === slide.id ? 'ring-2 ring-blue-500' : ''}
@@ -152,6 +169,16 @@ export function SlidesDisplay({ slides = [] }: SlidesDisplayProps) {
           </div>
         )}
       </div>
+
+      {/* Preview Modal */}
+      {previewSlide && (
+        <SlidePreviewModal
+          imageUrl={previewSlide.imageUrl}
+          title={previewSlide.title}
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+        />
+      )}
     </div>
   );
 }

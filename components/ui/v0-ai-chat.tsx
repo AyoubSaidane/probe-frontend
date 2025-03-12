@@ -50,6 +50,13 @@ function useAutoResizeTextarea({
             );
 
             textarea.style.height = `${newHeight}px`;
+            
+            // Enable scrolling if content exceeds maxHeight
+            if (maxHeight && textarea.scrollHeight > maxHeight) {
+                textarea.style.overflowY = "auto";
+            } else {
+                textarea.style.overflowY = "hidden";
+            }
         },
         [minHeight, maxHeight]
     );
@@ -121,10 +128,13 @@ export function VercelV0Chat() {
                                 "focus:outline-none",
                                 "focus-visible:ring-0 focus-visible:ring-offset-0",
                                 "placeholder:text-[var(--neutral-500)] placeholder:text-sm",
-                                "min-h-[60px]"
+                                "min-h-[60px]",
+                                "[scrollbar-width:none]", /* Firefox */
+                                "[&::-webkit-scrollbar]:hidden" /* WebKit */
                             )}
                             style={{
-                                overflow: "hidden",
+                                overflowY: "auto", // Allow vertical scrolling
+                                msOverflowStyle: "none", // IE and Edge
                             }}
                         />
                     </div>
