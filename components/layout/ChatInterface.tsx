@@ -1,6 +1,6 @@
 "use client";
 
-import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
+import { VercelV0Chat } from "@/components/chat/v0-ai-chat";
 
 export function ChatInterface() {
   return (

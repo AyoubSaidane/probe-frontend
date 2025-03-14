@@ -1,7 +1,7 @@
 "use client";
 
 import { Separator } from "@/components/ui/separator";
-import { SimplifiedChat } from "@/components/ui/simplified-chat";
+import { SimplifiedChat } from "@/components/chat/simplified-chat";
 import { useRef, useEffect } from "react";
 
 interface Message {

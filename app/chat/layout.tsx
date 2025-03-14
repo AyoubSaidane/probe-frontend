@@ -1,4 +1,4 @@
-import './global.css'
+import '../global.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { SessionNavBar } from "@/components/ui/sidebar"
