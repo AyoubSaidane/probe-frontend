@@ -1,27 +1,24 @@
-import '../global.css'
+"use client";
 import { Footerdemo } from "@/components/ui/footer-section";
-
-// Footer component
-function Footer() {
-  return (
-    <div className="block">
-      <Footerdemo />
-    </div>
-  );
-}
+import { Boxes } from "@/components/ui/background-boxes";
 
 export default function WebsiteLayout({
-  children,
+  children
 }: {
   children: React.ReactNode
 }) {
   return (
-    <div className="flex min-h-screen flex-col">
-      {/* Main content area, will flex-grow to push footer down */}
-      <main className="flex-grow">{children}</main>
+    <div className="relative w-full min-h-screen overflow-hidden">
       
-      {/* Footer will always stay at the bottom */}
-      <Footer />
+      {/* Content container */}
+      <div className="relative z-10">
+        {children}
+      </div>
+      
+      {/* Footer */}
+      <div className="relative z-10">
+        <Footerdemo />
+      </div>
     </div>
   );
 }
