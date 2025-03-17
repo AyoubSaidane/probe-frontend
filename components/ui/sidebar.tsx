@@ -1,9 +1,10 @@
 "use client";
 
+import { useDriveConnection } from "@/app/chat/layout";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion } from "framer-motion";
-import { Badge } from "@/components/ui/badge"
+import { Badge } from "@/components/ui/badge";
 import {
   Blocks,
   ChevronsUpDown,
@@ -17,10 +18,13 @@ import {
   Settings,
   UserCircle,
   UserCog,
-  MessagesSquare
+  MessagesSquare,
+  Loader2,
+  CheckCircle,
+  AlertCircle,
 } from "lucide-react";
 import Image from "next/image";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -33,7 +37,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from "@/components/ui/skeleton";
 
 const sidebarVariants = {
   open: {
@@ -79,10 +83,18 @@ const staggerVariants = {
   },
 };
 
-
 export function SessionNavBar() {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const pathname = usePathname();
+  const { connectToDriveHandler, isConnecting, connectionStatus } = useDriveConnection();
+
+  const getDriveIcon = () => {
+    if (isConnecting) return <Loader2 className="h-4 w-4 text-[var(--main-text-bg)] animate-spin" />;
+    if (connectionStatus === 'success') return <CheckCircle className="h-4 w-4 text-green-500" />;
+    if (connectionStatus === 'error') return <AlertCircle className="h-4 w-4 text-red-500" />;
+    return <DatabaseBackup className="h-4 w-4 text-[var(--main-text-bg)]" />;
+  };
+
   return (
     <motion.div
       className={cn(
@@ -260,24 +272,23 @@ export function SessionNavBar() {
                         )}
                       </motion.li>
                     </Link>
-                    <Link
-                      href="/review"
+                    <button
+                      onClick={connectToDriveHandler}
+                      disabled={isConnecting}
                       className={cn(
-                        "flex h-8 w-full flex-row items-center rounded-md px-2 py-1.5 transition hover:bg-muted hover:text-primary",
-
-                        pathname?.includes("review") &&
-                          "bg-muted text-blue-600",
+                        "flex h-8 w-full flex-row items-center rounded-md px-2 py-1.5 transition hover:bg-muted hover:text-primary text-left",
+                        isConnecting && "cursor-wait opacity-70"
                       )}
                     >
-                      <DatabaseBackup className="h-4 w-4 text-[var(--main-text-bg)]" />{" "}
+                      {getDriveIcon()}{" "}
                       <motion.li variants={variants}>
                         {!isCollapsed && (
                           <p className="ml-2 text-sm font-medium text-[var(--main-text-bg)]">
-                            Refresh Drive
+                            {isConnecting ? "Connecting..." : "Refresh Drive"}
                           </p>
                         )}
                       </motion.li>
-                    </Link>
+                    </button>
                   </div>
                 </ScrollArea>
               </div>

@@ -13,9 +13,10 @@ interface Message {
 interface ChatAreaProps {
   messages: Message[];
   onSendMessage: (content: string) => void;
+  isLoading?: boolean;
 }
 
-export function ChatArea({ messages, onSendMessage }: ChatAreaProps) {
+export function ChatArea({ messages, onSendMessage, isLoading = false }: ChatAreaProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   // Scroll to bottom when messages change
@@ -29,25 +30,13 @@ export function ChatArea({ messages, onSendMessage }: ChatAreaProps) {
       style={{ width: "calc(55% - 3.05rem)" }}
     >
       {/* Chat messages area - only this should be scrollable */}
-      <div className="flex-1 overflow-y-auto px-4 scrollbarWidth-none msOverflowStyle-none pb-24">
-        <style>
-        {`
-          /* Hide scrollbar for Chrome, Safari, and Edge */
-          div::-webkit-scrollbar {
-            display: none;
-          }
-        `}
-        </style>
+      <div className="flex-1 overflow-y-auto px-4 scrollbarWidth-none msOverflowStyle-none pb-4">
         <div className="flex flex-col space-y-4 w-[70%] mx-auto pt-6">
           {messages.map((message, index) => (
             <div key={message.id}>
               <div className="text-left">
-                {message.role === "assistant" && (
-                  <div className="text-xl font-bold mb-2">
-                    Here's what probe found for you
-                  </div>
-                )}
-                <div className="text-sm">
+                {/* Make user messages bold instead of assistant messages */}
+                <div className={`text-sm ${message.role === "user" ? "text-xl font-bold mb-2" : ""}`}>
                   {message.content}
                 </div>
               </div>
@@ -62,8 +51,14 @@ export function ChatArea({ messages, onSendMessage }: ChatAreaProps) {
         </div>
       </div>
       
-      {/* Floating chat input at the bottom */}
-      <div className="absolute bottom-6 left-0 right-0 px-4 flex justify-center z-10">
+      {isLoading && (
+        <div className="flex items-center justify-center my-2">
+          <div className="animate-pulse text-sm">Probe is thinking...</div>
+        </div>
+      )}
+      
+      {/* Chat input at the bottom - not floating anymore */}
+      <div className="px-4 py-2 border-t border-gray-100 bg-white rounded-bl-xl">
         <SimplifiedChat 
           onSendMessage={onSendMessage}
         />

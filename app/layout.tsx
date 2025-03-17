@@ -3,8 +3,8 @@ import type { Metadata } from 'next'
 import React from "react";
 
 export const metadata: Metadata = {
-  title: 'Your Site Name',
-  description: 'Your site description',
+  title: 'Probe',
+  description: 'Knowledge management for consultants',
 }
 
 export default function RootLayout({
